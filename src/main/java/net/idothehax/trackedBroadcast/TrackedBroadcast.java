@@ -184,10 +184,11 @@ public class TrackedBroadcast extends JavaPlugin implements TabExecutor {
 
     // Broadcast logic
     public void broadcastTrackedLocations() {
-        String format = config.getString("broadcastFormat",
-                "[Tracked] %players%");
-        String playerFormat = config.getString("playerFormat",
-                "%name% is at %world%: %x%, %y%, %z%");
+        String format = config.getString("broadcastFormat", "[Tracked]\n%players%");
+        String playerFormat = config.getString("playerListFormat", "§a- %name%§r at §e%world%§r: §b%x%§r, %y%, %z%");
+        boolean showY = config.getBoolean("show_y_level", true);
+        boolean asList = config.getBoolean("broadcastList", true);
+
         List<String> playerMsgs = new ArrayList<>();
         for (UUID uuid : trackedPlayers) {
             Player p = Bukkit.getPlayer(uuid);
@@ -197,12 +198,21 @@ public class TrackedBroadcast extends JavaPlugin implements TabExecutor {
                         .replace("%name%", p.getName())
                         .replace("%world%", w.getName())
                         .replace("%x%", String.valueOf(p.getLocation().getBlockX()))
-                        .replace("%y%", String.valueOf(p.getLocation().getBlockY()))
                         .replace("%z%", String.valueOf(p.getLocation().getBlockZ()));
+                if (showY) {
+                    msg = msg.replace("%y%", String.valueOf(p.getLocation().getBlockY()));
+                } else {
+                    msg = msg.replaceAll(",? ?%y%,? ?", "");
+                }
                 playerMsgs.add(msg);
             }
         }
-        String all = String.join(" | ", playerMsgs);
+        String all;
+        if (asList) {
+            all = String.join("\n", playerMsgs);
+        } else {
+            all = String.join(" | ", playerMsgs);
+        }
         String result = format.replace("%players%", all);
         if (!playerMsgs.isEmpty()) {
             Bukkit.broadcastMessage(result);
