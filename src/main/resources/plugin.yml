@@ -1,0 +1,18 @@
+name: TrackedBroadcast
+version: '1.0.0'
+main: net.idothehax.trackedBroadcast.TrackedBroadcast
+api-version: '1.21'
+prefix: TrackedBroadcast
+load: STARTUP
+authors: [ IDoTheHax ]
+commands:
+  track:
+    description: Manage and broadcast tracked players.
+    usage: /track <add|remove|list|broadcast> [player]
+  autobroadcast:
+    enabled: true
+    interval_seconds: 60
+permissions:
+  track.manage:
+    description: Allows using /track commands
+    default: op

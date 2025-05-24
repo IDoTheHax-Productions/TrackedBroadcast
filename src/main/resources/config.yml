@@ -1,0 +1,10 @@
+# TrackedBroadcast plugin config
+
+# The format for the broadcast message
+broadcastFormat: "[Tracked] %players%"
+
+# The format for each player's info in the broadcast
+playerFormat: "%name% is at %world%: %x%, %y%, %z%"
+
+# List of tracked player UUIDs (do not edit manually unless you know what you're doing)
+trackedPlayers: []
