@@ -20,7 +20,6 @@ public class TrackedBroadcast extends JavaPlugin implements TabExecutor {
 
     @Override
     public void onEnable() {
-        // Load config
         saveDefaultConfig();
         config = getConfig();
         loadTrackedPlayers();
@@ -145,6 +144,9 @@ public class TrackedBroadcast extends JavaPlugin implements TabExecutor {
             case "autobroadcast":
                 handleAutoBroadcastCommand(sender, args);
                 return true;
+            case "showy":
+                handleShowYCommand(sender, args);
+                return true;
             default:
                 sendHelp(sender);
                 return true;
@@ -180,6 +182,17 @@ public class TrackedBroadcast extends JavaPlugin implements TabExecutor {
         } else {
             sender.sendMessage("§eUsage: /track autobroadcast <on|off|interval> [seconds]");
         }
+    }
+
+    private void handleShowYCommand(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage("§eUsage: /track showy <on|off>");
+            return;
+        }
+        boolean showY = args[1].equalsIgnoreCase("on");
+        config.set("show_y_level", showY);
+        saveConfig();
+        sender.sendMessage("§aY level in broadcasts " + (showY ? "enabled." : "disabled."));
     }
 
     // Broadcast logic
@@ -225,6 +238,7 @@ public class TrackedBroadcast extends JavaPlugin implements TabExecutor {
         s.sendMessage("§6/track list §7- List tracked players");
         s.sendMessage("§6/track broadcast §7- Broadcast locations");
         s.sendMessage("§6/track autobroadcast <on|off|interval> [seconds] §7- Autobroadcast control");
+        s.sendMessage("§6/track showy <on|off> §7- Toggle Y-level in broadcasts");
     }
 
     // Tab completion for ease of use
@@ -232,7 +246,7 @@ public class TrackedBroadcast extends JavaPlugin implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> out = new ArrayList<>();
         if (args.length == 1) {
-            out.addAll(Arrays.asList("add", "remove", "list", "broadcast", "autobroadcast"));
+            out.addAll(Arrays.asList("add", "remove", "list", "broadcast", "autobroadcast", "showy"));
             return out.stream().filter(s -> s.startsWith(args[0])).collect(Collectors.toList());
         }
         if (args.length == 2) {
@@ -242,6 +256,10 @@ public class TrackedBroadcast extends JavaPlugin implements TabExecutor {
             }
             if ("autobroadcast".equalsIgnoreCase(args[0])) {
                 return Arrays.asList("on", "off", "interval").stream()
+                        .filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
+            }
+            if ("showy".equalsIgnoreCase(args[0])) {
+                return Arrays.asList("on", "off").stream()
                         .filter(s -> s.startsWith(args[1])).collect(Collectors.toList());
             }
         }
